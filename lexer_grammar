@@ -1,0 +1,55 @@
+ACTIONS RULES:
+    ° _action_ : Current added action
+    ° _prev_action_needed_ : Previous action required (if not present, throw error)
+    ° _next_action_needed_ : Authorized action after the current
+
+-> Sign -
+    -> if action \*\ before throw errors
+    -> create an action \substraction\ and attach it a need action \number\
+-> number
+    -> if before there is an action \sqrt\ or \indeterminate\, create an action \degree_term\ action
+    -> get the number enterely and create an action \number\
+-> space
+    -> pass
+-> sign ^
+    -> if action \indeterminate\ is before 
+    -> create action \sqrt\
+-> sign *
+    -> if action \number\ before, create action \op_mutliply\
+-> sing X
+    -> create action \indeterminate\ with _next_action_needed_ : \
+
+
+
+{
+    action: SUM,
+    next_authorized_action: [OPERAND]
+    prev_action_needed: []
+}
+
+{
+    action: SUBSTRACTION,
+    next_authorized_action: [OPERAND]
+}
+
+{
+    action: TIME,
+    next_authorized_action: [OPERAND, VARIABLE]
+}
+
+{
+    action: OPERAND,
+    value: `operand_value`
+    next_authorized_action: [SUM, SUBSTRACTION, VARIABLE]
+}
+
+{
+    action: VARIABLE,
+    value: `variable_letter`
+    next_authorized_action: [SQRT, SUM, SUBSTRACTION]
+}
+
+{
+    action: SQRT,
+    next_authorized_action: [OPERAND]
+}
