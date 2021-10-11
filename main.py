@@ -34,7 +34,6 @@ def merge_terms(terms):
 
 def lex(equation_part):
   terms = re.split(r"(\+|\-)", equation_part)
-  print(terms)
 
   actions = list()
   i = 0
@@ -77,17 +76,28 @@ def negate_coef_list(coefficients):
 
   return actions
 
-def print_reduced_form(terms):
-  reduced_form = None
-  for term in terms:
-    if reduced_form == None:
-      reduced_form = (str(term["coefficient"]) if term["coefficient"] > 0 else " - " + str(term["coefficient"] * -1)) + " * " + ("x" if term["variable"] == None else term["variable"]) + "^" + str(term["root_degree"])
-    else:
-      reduced_form += (" + " + str(term["coefficient"]) if term["coefficient"] > 0 else " - " + str(term["coefficient"] * -1)) + " * " + ("x" if term["variable"] == None else term["variable"]) + "^" + str(term["root_degree"])
+def print_reduced_form(terms, polynomial_degree):
+  if polynomial_degree > 2:
+    return
 
-
-  reduced_form += " = 0"
-  print("Reduced form: " + reduced_form)
+  if polynomial_degree == 0:
+    reduced_form = None
+    for term in terms:
+      if reduced_form == None:
+        reduced_form = (str(term["coefficient"]) if term["coefficient"] >= 0 else " - " + str(term["coefficient"] * -1))
+      else:
+        reduced_form += (" + " + str(term["coefficient"]) if term["coefficient"] >= 0 else " - " + str(term["coefficient"] * -1))
+    reduced_form += " = 0"
+    print("Reduced form: " + reduced_form)
+  else:
+    reduced_form = None
+    for term in terms:
+      if reduced_form == None:
+        reduced_form = (str(term["coefficient"]) if term["coefficient"] > 0 else " - " + str(term["coefficient"] * -1)) + " * " + ("x" if term["variable"] == None else term["variable"]) + "^" + str(term["root_degree"])
+      else:
+        reduced_form += (" + " + str(term["coefficient"]) if term["coefficient"] > 0 else " - " + str(term["coefficient"] * -1)) + " * " + ("x" if term["variable"] == None else term["variable"]) + "^" + str(term["root_degree"])
+    reduced_form += " = 0"
+    print("Reduced form: " + reduced_form)
 
 def get_polynomial_degree(terms):
   polynomial_degree = 0
@@ -95,12 +105,10 @@ def get_polynomial_degree(terms):
     if term["root_degree"] > polynomial_degree:
       polynomial_degree = term["root_degree"]
 
+  print("Polynomial degree: " + str(polynomial_degree))
   return polynomial_degree
 
-# if (is_quadratic_or_less == False):
-#   exit("The polynomial degree is stricly greater than 2, I can't solve it.")
-
-def solve_monomial(terms):
+def solve_basic_equation(terms):
   x = terms[0]["coefficient"]
 
   if x != 0:
@@ -110,21 +118,27 @@ def solve_monomial(terms):
   exit(str(x) + " = 0")
 
 def solve_linear_polynomial(terms):
-  print("SOLVE LINEAR POLYNOMIAL")
-  
+  x_coefficient = [x for x in terms if x["root_degree"] == 1][0]["coefficient"]
+  constant_term = [x for x in terms if x["root_degree"] == 0][0]["coefficient"]
+
+  solution = 0
+  if x_coefficient > 1:
+    solution = -constant_term / x_coefficient
+  else:
+    solution = -constant_term
+
+  print("There is one solution to this linear equation:")
+  print(solution)
 
 def solve_quadratic_polynomial(terms):
-  print("Polynomial degree: 2")
-
   a = [x for x in terms if x["root_degree"] == 2][0]["coefficient"] if len([x for x in terms if x["root_degree"] == 2]) > 0 else 0
   b = [x for x in terms if x["root_degree"] == 1][0]["coefficient"] if len([x for x in terms if x["root_degree"] == 1]) > 0 else 0
   c = [x for x in terms if x["root_degree"] == 0][0]["coefficient"] if len([x for x in terms if x["root_degree"] == 0]) > 0 else 0
 
   discriminant = (b*b) - (4*a*c)
-  print(discriminant)
 
   if discriminant < 0:
-    print("Discriminant is strictly negative (), the two solutions of are complexes:")
+    print("Discriminant strictly negative (" + str(discriminant) + "), the two solutions are complexes:")
     x1 = (-b - sqrt(discriminant * -1)) / (2*a)
     x2 = (-b + sqrt(discriminant * -1)) / (2*a)
     print(str(x1) + "i")
@@ -138,7 +152,7 @@ def solve_quadratic_polynomial(terms):
   if (discriminant > 0):
     x1 = (-b - sqrt(discriminant)) / (2*a)
     x2 = (-b + sqrt(discriminant)) / (2*a)
-    print("Discriminant is strictly positive, the two solutions are")
+    print("Discriminant strictly positive (" + str(discriminant) + "), the two solutions are:")
     print(x1)
     print(x2)
     exit()
@@ -161,20 +175,19 @@ def main():
     else:
       merged_actions += terms[index]
 
-  print(merged_actions)
-
   sorted_terms = merge_terms(merged_actions)
   sorted_terms.sort(reverse=True, key=lambda x: x["root_degree"])
 
   polynomial_degree = get_polynomial_degree(sorted_terms)
+  if polynomial_degree > 2:
+    exit("The polynomial degree is stricly greater than 2, I can't solve it.")
+
+  print_reduced_form(sorted_terms, polynomial_degree)
   if polynomial_degree == 0:
-    solve_monomial(sorted_terms)
-
-  if polynomial_degree == 1:
+    solve_basic_equation(sorted_terms)
+  elif polynomial_degree == 1:
     solve_linear_polynomial(sorted_terms)
-
-  if polynomial_degree == 2:
-    print_reduced_form(sorted_terms)
+  elif polynomial_degree == 2:
     solve_quadratic_polynomial(sorted_terms)
 
 
