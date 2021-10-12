@@ -1,1 +1,17 @@
 -> Split the equation sides
+
+
+(12 oct 2021, 22:11) Next step:
+Handle basic syntax errors:
+- empty string
+- if there is at least two equation parts (aka one "="): at least this form: "... = ..." 
+
+Create a function that parse the term:
+- Check term degree
+- Check the term with multiple regex format
+- Handle error if no match
+- Parse, create and return the polynomial term object
+
+....
+Refactoring:
+- Separate in different files the program

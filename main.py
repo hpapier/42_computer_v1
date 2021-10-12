@@ -32,6 +32,13 @@ def merge_terms(terms):
 
   return merged_terms
 
+def get_polynomial_term(term, coef_sign):
+
+
+
+def check_term_validity(term):
+  re.findall()
+
 def lex(equation_part):
   terms = re.split(r"(\+|\-)", equation_part)
 
@@ -39,28 +46,30 @@ def lex(equation_part):
   i = 0
   while i < len(terms):
     term = terms[i]
-    term_value_sign_coef = 1
+    coef_sign = "+"
 
-    if term == "+" or term == "-":
-      term_value_sign_coef = 1 if term == "+" else -1
+    if term == "-":
+      coef_sign = "-"
       i += 1
       term = terms[i]
 
-    operands = re.findall(r"[0-9]+\.?[0-9]*", term)
-    variables = re.findall(r"[a-zA-Z]", term)
-    variable = None if len(variables) == 0 else variables[0]
+    polynomial_term = get_polynomial_term(term, coef_sign)
 
-    coefficient = 1
-    degree = 0
+    # operands = re.findall(r"[0-9]+\.?[0-9]*", term)
+    # variables = re.findall(r"[a-zA-Z]", term)
+    # variable = None if len(variables) == 0 else variables[0]
 
-    if len(operands) > 1:
-      coefficient = float(operands[0])
-      degree = int(operands[1] or 0)
-    else:
-      coefficient =  float(operands[0]) if variable == None else 1
-      degree = 0 if variable == None else int(operands[0])
+    # coefficient = 1
+    # degree = 0
 
-    polynomial_term = create_polynomial_term(variable, coefficient * term_value_sign_coef, degree)
+    # if len(operands) > 1:
+    #   coefficient = float(operands[0])
+    #   degree = int(operands[1] or 0)
+    # else:
+    #   coefficient =  float(operands[0]) if variable == None else 1
+    #   degree = 0 if variable == None else int(operands[0])
+
+    # polynomial_term = create_polynomial_term(variable, coefficient * coef_sign, degree)
     actions.append(polynomial_term)
 
     i += 1
@@ -189,7 +198,5 @@ def main():
     solve_linear_polynomial(sorted_terms)
   elif polynomial_degree == 2:
     solve_quadratic_polynomial(sorted_terms)
-
-
 
 main()
