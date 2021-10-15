@@ -7,11 +7,10 @@ Handle basic syntax errors:
 - if there is at least two equation parts (aka one "="): at least this form: "... = ..." 
 
 Create a function that parse the term:
-- Check term degree
-- Check the term with multiple regex format
-- Handle error if no match
+[v] - Check term degree
+[v] - Check the term with multiple regex format
+- Handle error if no match or unconsistent format
 - Parse, create and return the polynomial term object
-
 ....
 Refactoring:
 - Separate in different files the program

@@ -32,7 +32,29 @@ def merge_terms(terms):
 
   return merged_terms
 
+def parse_number(value):
+  try:
+    number = float(value)
+    if number.is_integer:
+      return int(number)
+    return number
+  except:
+    return 0
+
 def get_polynomial_term(term, coef_sign):
+  print("get_polynomial_term")
+  parsed_term = re.findall(r"^([0-9]+\.?[0-9]*)?\*?([a-z])?\^?([0-2])?$", term)
+
+  if len(parsed_term) == 0:
+    print("Syntax error: " + term)
+    exit()
+
+  # TODO: multiply coefficient by the coef sign, coef_sign is a string so convert into a number to multiply by (aka 1 or -1)
+  coefficient = parse_number(parsed_term[0][0]) if parsed_term[0][0] != "" else 1
+  variable = parsed_term[0][1]
+  root_degree = parsed_term[0][2]
+
+  return create_polynomial_term(variable, coefficient, root_degree)
 
 
 
@@ -171,11 +193,17 @@ def main():
     exit("You must provide an equation")
 
   equation = str(sys.argv[1])
-  equation_parts = map(lambda value: value.replace(" ", ""), equation.split("="))
+  splitted_equation = equation.split("=")
+  if len(splitted_equation) < 2:
+    exit("You must provide a valid equation")
+
+  equation_parts = map(lambda value: value.replace(" ", ""), splitted_equation)
 
   terms = list()
   for part in equation_parts:
     terms.append(lex(part))
+
+  exit()
 
   merged_actions = list()
   for index in range(len(terms)):
