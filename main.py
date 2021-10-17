@@ -49,10 +49,12 @@ def get_polynomial_term(term, coef_sign):
     print("Syntax error: " + term)
     exit()
 
-  # TODO: multiply coefficient by the coef sign, coef_sign is a string so convert into a number to multiply by (aka 1 or -1)
   coefficient = parse_number(parsed_term[0][0]) if parsed_term[0][0] != "" else 1
+  if coef_sign == "-":
+    coefficient = coefficient * -1
+
   variable = parsed_term[0][1]
-  root_degree = parsed_term[0][2]
+  root_degree = parse_number(parsed_term[0][2]) if parsed_term[0][2] != "" else 1 if variable != "" else None
 
   return create_polynomial_term(variable, coefficient, root_degree)
 
@@ -76,22 +78,6 @@ def lex(equation_part):
       term = terms[i]
 
     polynomial_term = get_polynomial_term(term, coef_sign)
-
-    # operands = re.findall(r"[0-9]+\.?[0-9]*", term)
-    # variables = re.findall(r"[a-zA-Z]", term)
-    # variable = None if len(variables) == 0 else variables[0]
-
-    # coefficient = 1
-    # degree = 0
-
-    # if len(operands) > 1:
-    #   coefficient = float(operands[0])
-    #   degree = int(operands[1] or 0)
-    # else:
-    #   coefficient =  float(operands[0]) if variable == None else 1
-    #   degree = 0 if variable == None else int(operands[0])
-
-    # polynomial_term = create_polynomial_term(variable, coefficient * coef_sign, degree)
     actions.append(polynomial_term)
 
     i += 1
@@ -133,7 +119,7 @@ def print_reduced_form(terms, polynomial_degree):
 def get_polynomial_degree(terms):
   polynomial_degree = 0
   for term in terms:
-    if term["root_degree"] > polynomial_degree:
+    if term["root_degree"] != None and term["root_degree"] > polynomial_degree:
       polynomial_degree = term["root_degree"]
 
   print("Polynomial degree: " + str(polynomial_degree))
@@ -203,7 +189,7 @@ def main():
   for part in equation_parts:
     terms.append(lex(part))
 
-  exit()
+  print(terms)
 
   merged_actions = list()
   for index in range(len(terms)):
